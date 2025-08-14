@@ -1,0 +1,1124 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+
+  <div class="border-box-sizing">
+    <div class="container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>Module Two Problem Set: Interaction Terms and Qualitative Predictors<a rel="noopener" class="anchor-link" href="#Module-Two-Problem-Set:-Interaction-Terms-and-Qualitative-Predictors">&#182;</a></h1><p>In this notebook, you have been given a set of steps that will show you how to create multiple regression models that include interaction terms and qualitative predictors in R. It is very important to run the steps in order. Some steps depend on the outputs of earlier steps. Once you have run all the steps, you will be asked to create your own regression models to help you answer the questions in the Module Two Problem Set. You are expected to write the R script yourself to answer these questions.</p>
+<p>Reminder: If you have not already reviewed the Problem Set Report template for your Module Two Problem Set, be sure to do so now. That will give you an idea of the questions you will need to answer with the outputs of this script. You should use the code you are given as reference when writing your own scripts.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Step 1: Loading the Data Set<a rel="noopener" class="anchor-link" href="#Step-1:-Loading-the-Data-Set">&#182;</a></h3><p>You are an analyst working for a car maker. You have access to a set of data that can be used to study the fuel economy of a car. Car makers are interested in studying factors that are associated with better fuel economy. This data set includes several important variables that are associated with fuel economy. You will use this data set to create models to predict fuel economy.</p>
+<p>This block of R code will load the data set from <strong>mtcars.csv</strong> file. Here are the variables contained in the dataset.</p>
+<table>
+<thead><tr>
+<th><div style="text-align: left;"> Variable </div></th>
+<th><div style="text-align: left;"> What does it represent? </div></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><div style="text-align: left;"> mpg </div></td>
+<td><div style="text-align: left;"> Fuel economy in miles/(US) gallon </div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> cyl </div></td>
+<td><div style="text-align: left;"> Number of cylinders in car&#39;s engine. Values are (4, 6, 8) </div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> disp </div></td>
+<td><div style="text-align: left;"> Displacement (cu.in.) measures overall volume in the engine as a factor of cylinder circumfrance, depth and total number of cylinders. This metric is a good proxy for the total amount of power the engine can generate.</div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> hp </div></td>
+<td><div style="text-align: left;"> Gross horsepower measures the theoretical output of an engine’s power output.</div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> drat </div></td>
+<td><div style="text-align: left;"> Rear axle ratio indicates the number of turns of the drive shaft for every one rotation of the wheel axle. A vehicle with a high ratio would provide more torque. </div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> wt </div></td>
+<td><div style="text-align: left;"> Weight of the car per 1,000 lbs. </div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> qsec </div></td>
+<td><div style="text-align: left;"> Quarter mile time is a performance measure of acceleration of the car.</div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> vs </div></td>
+<td><div style="text-align: left;"> Engine&#39;s cylinder configuration as V-shaped or straight. Configuration offers trade offs in power/torque, design usage in terms of space/size of engine and performance or center of gravity of vehicle. Values are (0 = V-shaped, 1 = straight) </div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> am </div></td>
+<td><div style="text-align: left;"> Automatic or Manual transmission. Values are (0 = automatic, 1 = manual) </div></td>
+</tr>
+<tr>
+<td><div style="text-align: left;"> gear </div></td>
+<td><div style="text-align: left;"> Number of gears in the transmission.</div></td>
+</tr>
+</tbody>
+</table>
+<p>Reference:
+R data sets. (1974). <i>Motor trend car road tests<i> [Data file]. Retrieved from <a rel="noopener" href="https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/mtcars">https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/mtcars</a></i></i></p><i><i>
+<p>Click the code section below and hit the <strong>Run</strong> button above.</p>
+
+</i></i></div><i><i>
+</i></i></div><i><i>
+</i></i></div><i><i>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span><span class="c1"># Loading mtcars data set from a mtcars.csv file</span>
+mtcars <span class="o">&lt;-</span> read.csv<span class="p">(</span>file<span class="o">=</span><span class="s">&#39;mtcars.csv&#39;</span><span class="p">,</span> header<span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+
+<span class="c1"># Converting appropriate variables to factors  </span>
+mtcars2 <span class="o">&lt;-</span> <span class="kp">within</span><span class="p">(</span>mtcars<span class="p">,</span> <span class="p">{</span>
+   vs <span class="o">&lt;-</span> <span class="kp">factor</span><span class="p">(</span>vs<span class="p">)</span>
+   am <span class="o">&lt;-</span> <span class="kp">factor</span><span class="p">(</span>am<span class="p">)</span>
+   cyl  <span class="o">&lt;-</span> <span class="kp">factor</span><span class="p">(</span>cyl<span class="p">)</span>
+   gear <span class="o">&lt;-</span> <span class="kp">factor</span><span class="p">(</span>gear<span class="p">)</span>
+   carb <span class="o">&lt;-</span> <span class="kp">factor</span><span class="p">(</span>carb<span class="p">)</span>
+<span class="p">})</span>
+
+
+<span class="c1"># Print the first six rows</span>
+<span class="kp">print</span><span class="p">(</span><span class="s">&quot;head&quot;</span><span class="p">)</span>
+<span class="kp">head</span><span class="p">(</span>mtcars2<span class="p">,</span> <span class="m">6</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &quot;head&quot;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea">
+<table>
+<caption>A data.frame: 6 &#215; 12</caption>
+<thead>
+	<tr><th scope="col">car</th><th scope="col">mpg</th><th scope="col">cyl</th><th scope="col">disp</th><th scope="col">hp</th><th scope="col">drat</th><th scope="col">wt</th><th scope="col">qsec</th><th scope="col">vs</th><th scope="col">am</th><th scope="col">gear</th><th scope="col">carb</th></tr>
+	<tr><th scope="col">&lt;fct&gt;</th><th scope="col">&lt;dbl&gt;</th><th scope="col">&lt;fct&gt;</th><th scope="col">&lt;dbl&gt;</th><th scope="col">&lt;int&gt;</th><th scope="col">&lt;dbl&gt;</th><th scope="col">&lt;dbl&gt;</th><th scope="col">&lt;dbl&gt;</th><th scope="col">&lt;fct&gt;</th><th scope="col">&lt;fct&gt;</th><th scope="col">&lt;fct&gt;</th><th scope="col">&lt;fct&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Mazda RX4        </td><td>21.0</td><td>6</td><td>160</td><td>110</td><td>3.90</td><td>2.620</td><td>16.46</td><td>0</td><td>1</td><td>4</td><td>4</td></tr>
+	<tr><td>Mazda RX4 Wag    </td><td>21.0</td><td>6</td><td>160</td><td>110</td><td>3.90</td><td>2.875</td><td>17.02</td><td>0</td><td>1</td><td>4</td><td>4</td></tr>
+	<tr><td>Datsun 710       </td><td>22.8</td><td>4</td><td>108</td><td> 93</td><td>3.85</td><td>2.320</td><td>18.61</td><td>1</td><td>1</td><td>4</td><td>1</td></tr>
+	<tr><td>Hornet 4 Drive   </td><td>21.4</td><td>6</td><td>258</td><td>110</td><td>3.08</td><td>3.215</td><td>19.44</td><td>1</td><td>0</td><td>3</td><td>1</td></tr>
+	<tr><td>Hornet Sportabout</td><td>18.7</td><td>8</td><td>360</td><td>175</td><td>3.15</td><td>3.440</td><td>17.02</td><td>0</td><td>0</td><td>3</td><td>2</td></tr>
+	<tr><td>Valiant          </td><td>18.1</td><td>6</td><td>225</td><td>105</td><td>2.76</td><td>3.460</td><td>20.22</td><td>1</td><td>0</td><td>3</td><td>1</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 2: Subsetting Data and Correlation Matrix<a rel="noopener" class="anchor-link" href="#Step-2:-Subsetting-Data-and-Correlation-Matrix">&#182;</a></h2><p>In this step, you will subset the original data set to select some variables and create a new data set. You will then print the correlation matrix for these variables in the new data set.</p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span>myvars <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;mpg&quot;</span><span class="p">,</span><span class="s">&quot;wt&quot;</span><span class="p">,</span><span class="s">&quot;drat&quot;</span><span class="p">)</span>
+mtcars_subset <span class="o">&lt;-</span> mtcars2<span class="p">[</span>myvars<span class="p">]</span>
+
+<span class="c1"># Print the first six rows</span>
+<span class="kp">print</span><span class="p">(</span><span class="s">&quot;head&quot;</span><span class="p">)</span>
+<span class="kp">head</span><span class="p">(</span>mtcars_subset<span class="p">,</span> <span class="m">6</span><span class="p">)</span>
+
+<span class="c1"># Print the correlation matrix</span>
+<span class="kp">print</span><span class="p">(</span><span class="s">&quot;cor&quot;</span><span class="p">)</span>
+corr_matrix <span class="o">&lt;-</span> cor<span class="p">(</span>mtcars_subset<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;pearson&quot;</span><span class="p">)</span>
+<span class="kp">round</span><span class="p">(</span>corr_matrix<span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &quot;head&quot;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea">
+<table>
+<caption>A data.frame: 6 &#215; 3</caption>
+<thead>
+	<tr><th scope="col">mpg</th><th scope="col">wt</th><th scope="col">drat</th></tr>
+	<tr><th scope="col">&lt;dbl&gt;</th><th scope="col">&lt;dbl&gt;</th><th scope="col">&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>21.0</td><td>2.620</td><td>3.90</td></tr>
+	<tr><td>21.0</td><td>2.875</td><td>3.90</td></tr>
+	<tr><td>22.8</td><td>2.320</td><td>3.85</td></tr>
+	<tr><td>21.4</td><td>3.215</td><td>3.08</td></tr>
+	<tr><td>18.7</td><td>3.440</td><td>3.15</td></tr>
+	<tr><td>18.1</td><td>3.460</td><td>2.76</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &quot;cor&quot;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea">
+<table>
+<caption>A matrix: 3 &#215; 3 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope="col">mpg</th><th scope="col">wt</th><th scope="col">drat</th></tr>
+</thead>
+<tbody>
+	<tr><th scope="row">mpg</th><td> 1.0000</td><td>-0.8677</td><td> 0.6812</td></tr>
+	<tr><th scope="row">wt</th><td>-0.8677</td><td> 1.0000</td><td>-0.7124</td></tr>
+	<tr><th scope="row">drat</th><td> 0.6812</td><td>-0.7124</td><td> 1.0000</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 3: Multiple Regression With Interaction Term<a rel="noopener" class="anchor-link" href="#Step-3:-Multiple-Regression-With-Interaction-Term">&#182;</a></h2><p>In this step, you will create a multiple regression model for fuel economy as the response variable, and weight and rear axle ratio as predictors. A numerically higher rear axle ratio sends more of the engine&#39;s available torque to the tires, thus increasing the fuel economy. We expect that the fuel economy and weight of the car are negatively correlated, meaning that as weight increases, the fuel economy decreases (or vice versa). However, the rate of decrease in fuel economy will be offset by a numerically higher rear axle ratio. This favors a multiple regression model in which the two predictor variables interact.</p>
+<p>The general form of this regression model is:</p>
+<p><br/><br/>
+\begin{equation*}
+\large E(y) = {\beta}_0\ +\ {\beta}_1\ {x}_1\ +\ {\beta}_2\ {x}_2\ +\ {\beta}_3\ {x}_1\ {x}_2
+\end{equation*}
+<br/><br/></p>
+<p>The prediction regression model is:</p>
+<p><br/><br/>
+\begin{equation*}
+\large \hat{y} = \hat{{\beta}_0} +\ \hat{{\beta}_1}\ {x}_1\ +\ \hat{{\beta}_2}\ {x}_2+\ \hat{{\beta}_3}\ {x}_1\ {x}_2
+\end{equation*}
+<br/><br/></p>
+<p>\begin{equation*}
+\text{where } \hat{y} \text{ is the predicted value of the fuel economy,}\ {x}_1\ \text{is weight,}\ {x}_2\ \text{is rear axle ratio}
+\end{equation*}</p>
+<p>\begin{equation*}
+\hat{{\beta}_0} \text{,} \hspace{0.25cm} \hat{{\beta}_1} \text{, } \hspace{0.25cm} \hat{{\beta}_2} \text{, } \hspace{0.25cm} \hat{{\beta}_3} \text{  } \text{ are estimates of}
+\text{  } {\beta}_0\ \text{,} \hspace{0.25cm} {\beta}_1\ \text{,} \hspace{0.25cm} {\beta}_2\ \text{,} \hspace{0.25cm} {\beta}_3\ \text{ respectively  }
+\end{equation*}
+<br/><br/></p>
+<p><br/></p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span><span class="c1"># Create the multiple regression model and print summary statistics. Note that this model includes the interaction term. </span>
+model1 <span class="o">&lt;-</span> lm<span class="p">(</span>mpg <span class="o">~</span> wt <span class="o">+</span> drat <span class="o">+</span> wt<span class="o">:</span>drat<span class="p">,</span> data<span class="o">=</span>mtcars_subset<span class="p">)</span>
+<span class="kp">summary</span><span class="p">(</span>model1<span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea">
+<pre>
+Call:
+lm(formula = mpg ~ wt + drat + wt:drat, data = mtcars_subset)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.8913 -1.8634 -0.3398  1.3247  6.4730 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)    5.550     12.631   0.439   0.6637  
+wt             3.884      3.798   1.023   0.3153  
+drat           8.494      3.321   2.557   0.0162 *
+wt:drat       -2.543      1.093  -2.327   0.0274 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.839 on 28 degrees of freedom
+Multiple R-squared:  0.7996,	Adjusted R-squared:  0.7782 
+F-statistic: 37.25 on 3 and 28 DF,  p-value: 6.567e-10
+</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Interpretation of Beta Estimates<a rel="noopener" class="anchor-link" href="#Interpretation-of-Beta-Estimates">&#182;</a></h3><p>From the output in previous step, the prediction model equation is:
+<br/><br/>
+\begin{equation*}
+\large \hat{y} = 5.5500\ +\ 3.8840\ {x}_1\ +\ 8.4940\ {x}_2\ -\ 2.5430\ {x}_1\ {x}_2
+\end{equation*}
+<br/><br/></p>
+<p>\begin{equation*}
+\text{where } \hat{y} \text{ is the predicted fuel efficiency,}\ {x}_1\ \text{is weight,}\ {x}_2\ \text{and rear axle ratio}  
+\end{equation*}</p>
+<p><br/></p>
+<p><strong>Interpret the estimated coefficient of rear axle ratio variable. </strong></p>
+<ul>
+<li><p>Let us assume there was no interaction present and the multiple regression model was 5.55 + 3.884 x1 + 8.494 x2. Then, the fuel economy of a car would increase on average by 8.494 for each unit increase in rear axle ratio (since 8.494 is the estimated coefficient for a rear axle ratio variable). 
+<br/><br/></p>
+</li>
+<li><p>However, weight and rear axle ratio interact in the model in step 3, therefore the rate of change of average fuel economy with rear axle ratio depends on the weight of the car. The estimated coefficient for x2 is:</p>
+<p>8.4940 x2 - 2.5430 (x1)(x2) = ( 8.4940 - 2.5430 x1 ) x2</p>
+<p>The estimated coefficient for x2 is ( 8.494 - 2.543 x1 )</p>
+</li>
+</ul>
+<ul>
+<li><p>Suppose we have a car with weight 2.50. The estimated coeffficient for rear axle ratio can be calculated as:</p>
+<p>( 8.494 - 2.543 x1 ) = 8.494 - 2.543 (2.50) = +2.1365</p>
+<p>In other words, we estimate that the fuel economy of a car with weight 2,500lbs will increase by 2.1365 units for each unit  increase in rear axle ratio. Note that this is different than the 8.494 from the first bullet. This is because the multiple regression model has an interaction term between weight and rear axle ratio. 
+<br/><br/></p>
+</li>
+<li><p>Suppose we now have a car with weight 2.32. If there were no interaction term included in the model, then the fuel economy of this car would increase on average by 8.494 for each unit increase in rear axle ratio. However, since we now have the interaction term in the model, the fuel economy of the car will increase by 8.494 - 2.543 (2.32) = 2.59 units for each unit increase in rear axle ratio. 
+<br/><br/></p>
+</li>
+<li><p>Therefore, the rate of increase in fuel economy now varies due to the presence of an interaction term.</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 4: Adding in a Qualitative Predictor<a rel="noopener" class="anchor-link" href="#Step-4:-Adding-in-a-Qualitative-Predictor">&#182;</a></h2><p>In this step, you will add a qualitative predictor into the multiple regression model from step 3. The transmission variable <strong>am</strong> is a qualitative variable with two levels; manual and automatic. Since this is a variable with two levels, we can use one dummy variable to represent it. R will create the dummy variable automatically and will also label it appropriately.</p>
+<p>The general form of this regression model is:
+<br/><br/>
+\begin{equation*}
+\large E(y) = {\beta}_0\ +\ {\beta}_1\ {x}_1\ +\ {\beta}_2\ {x}_2\ +\ {\beta}_3\ {x}_1\ {x}_2\ +\ {\beta}_4\ {x}_3
+\end{equation*}
+<br/><br/></p>
+<p>The prediction regression model is:
+<br/><br/>
+\begin{equation*}
+\large \hat{y} = \hat{{\beta}_0}\ +\ \hat{{\beta}_1}\ {x}_1\ +\ \hat{{\beta}_2}\ {x}_2\ +\ \hat{{\beta}_3}\ {x}_1\ {x}_2\ +\ \hat{{\beta}_4}\ {x}_3
+\end{equation*}
+<br/><br/></p>
+<p>\begin{equation*}
+\text{In the model above, } \hat{y} \text{ is the predicted fuel economy (mpg), x1 is weight (wt), x2 is rear axle ratio (drat), and x3 is the dummy variable for transmission (am).}
+\end{equation*}</p>
+<p>\begin{equation*}
+\text{Note that am=&#39;1&#39; for a manual transmission and am=&#39;0&#39; for an automatic transmission.}
+\end{equation*}</p>
+<p>\begin{equation*}
+\hat{{\beta}_0} \text{,} \hspace{0.25cm} \hat{{\beta}_1} \text{, } \hspace{0.25cm} \hat{{\beta}_2} \text{,} \hspace{0.25cm} \hat{{\beta}_3} \text{,} \hspace{0.25cm} \hat{{\beta}_4} \text{  } \text{ are estimates of}
+\text{  } {\beta}_0\ \text{,} \hspace{0.25cm} {\beta}_1\ \text{,} \hspace{0.25cm} {\beta}_2\ \text{,} \hspace{0.25cm} {\beta}_3\ \text{,} \hspace{0.25cm} {\beta}_4\ \text{ respectively  }\\
+\end{equation*}</p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span><span class="c1"># Subsetting data to only include the variables that are needed</span>
+myvars <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;mpg&quot;</span><span class="p">,</span><span class="s">&quot;wt&quot;</span><span class="p">,</span><span class="s">&quot;drat&quot;</span><span class="p">,</span><span class="s">&quot;am&quot;</span><span class="p">)</span>
+mtcars_subset <span class="o">&lt;-</span> mtcars2<span class="p">[</span>myvars<span class="p">]</span>
+
+<span class="c1"># Create the model</span>
+model2 <span class="o">&lt;-</span> lm<span class="p">(</span>mpg <span class="o">~</span> wt <span class="o">+</span> drat <span class="o">+</span> wt<span class="o">:</span>drat <span class="o">+</span> am<span class="p">,</span> data<span class="o">=</span>mtcars_subset<span class="p">)</span>
+<span class="kp">summary</span><span class="p">(</span>model2<span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea">
+<pre>
+Call:
+lm(formula = mpg ~ wt + drat + wt:drat + am, data = mtcars_subset)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.6907 -1.4711 -0.2512  0.9344  6.7453 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)    3.247     12.914   0.251   0.8034  
+wt             4.168      3.822   1.091   0.2851  
+drat           9.562      3.529   2.710   0.0116 *
+am1           -1.464      1.597  -0.917   0.3674  
+wt:drat       -2.708      1.111  -2.438   0.0216 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.847 on 27 degrees of freedom
+Multiple R-squared:  0.8057,	Adjusted R-squared:  0.7769 
+F-statistic: 27.99 on 4 and 27 DF,  p-value: 2.948e-09
+</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 5: Fitted Values<a rel="noopener" class="anchor-link" href="#Step-5:-Fitted-Values">&#182;</a></h2><p>In this step, you will obtain the fitted values of the data set using the model from step 4. Recall that the fitted value is just the predicted value of the dependent variable (miles per gallon) for data points from the data set.</p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span><span class="c1"># predicted values</span>
+<span class="kp">print</span><span class="p">(</span><span class="s">&quot;fitted&quot;</span><span class="p">)</span>
+fitted_values <span class="o">&lt;-</span> fitted.values<span class="p">(</span>model2<span class="p">)</span> 
+fitted_values
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &quot;fitted&quot;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea">
+<dl class="dl-horizontal">
+	<dt>1</dt>
+		<dd>22.3202071012681</dd>
+	<dt>2</dt>
+		<dd>20.6895074959298</dd>
+	<dt>3</dt>
+		<dd>24.0747502539664</dd>
+	<dt>4</dt>
+		<dd>19.2785936167189</dd>
+	<dt>5</dt>
+		<dd>18.3566004049746</dd>
+	<dt>6</dt>
+		<dd>18.1948543136102</dd>
+	<dt>7</dt>
+		<dd>17.7829147976458</dd>
+	<dt>8</dt>
+		<dd>19.9455031142101</dd>
+	<dt>9</dt>
+		<dd>20.4155783618075</dd>
+	<dt>10</dt>
+		<dd>18.5453485011573</dd>
+	<dt>11</dt>
+		<dd>18.5453485011573</dd>
+	<dt>12</dt>
+		<dd>15.7244271929934</dd>
+	<dt>13</dt>
+		<dd>17.1343818387994</dd>
+	<dt>14</dt>
+		<dd>16.9270355673574</dd>
+	<dt>15</dt>
+		<dd>11.4830468223862</dd>
+	<dt>16</dt>
+		<dd>10.468474335848</dd>
+	<dt>17</dt>
+		<dd>9.65079623894033</dd>
+	<dt>18</dt>
+		<dd>25.654703888853</dd>
+	<dt>19</dt>
+		<dd>34.0906848946004</dd>
+	<dt>20</dt>
+		<dd>28.8096807794287</dd>
+	<dt>21</dt>
+		<dd>24.1983096753214</dd>
+	<dt>22</dt>
+		<dd>17.9964150947557</dd>
+	<dt>23</dt>
+		<dd>18.378418393557</dd>
+	<dt>24</dt>
+		<dd>16.124985574862</dd>
+	<dt>25</dt>
+		<dd>16.6489676538974</dd>
+	<dt>26</dt>
+		<dd>27.4785433498266</dd>
+	<dt>27</dt>
+		<dd>27.3857668975878</dd>
+	<dt>28</dt>
+		<dd>28.6890131121626</dd>
+	<dt>29</dt>
+		<dd>19.1154587119623</dd>
+	<dt>30</dt>
+		<dd>20.7842398534528</dd>
+	<dt>31</dt>
+		<dd>16.2835591339497</dd>
+	<dt>32</dt>
+		<dd>21.7238845270116</dd>
+</dl>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 6: Residuals<a rel="noopener" class="anchor-link" href="#Step-6:-Residuals">&#182;</a></h2><p>In this step, you will obtain the residuals using the model in step 4. Recall that the residual is the difference between the actual value and the predicted value of the dependent variable (miles per gallon).</p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span><span class="c1"># residuals</span>
+<span class="kp">print</span><span class="p">(</span><span class="s">&quot;residuals&quot;</span><span class="p">)</span>
+residuals <span class="o">&lt;-</span> residuals<span class="p">(</span>model2<span class="p">)</span>
+residuals
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &quot;residuals&quot;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea">
+<dl class="dl-horizontal">
+	<dt>1</dt>
+		<dd>-1.32020710126808</dd>
+	<dt>2</dt>
+		<dd>0.310492504070191</dd>
+	<dt>3</dt>
+		<dd>-1.2747502539664</dd>
+	<dt>4</dt>
+		<dd>2.12140638328108</dd>
+	<dt>5</dt>
+		<dd>0.343399595025413</dd>
+	<dt>6</dt>
+		<dd>-0.0948543136101894</dd>
+	<dt>7</dt>
+		<dd>-3.48291479764585</dd>
+	<dt>8</dt>
+		<dd>4.45449688578988</dd>
+	<dt>9</dt>
+		<dd>2.38442163819248</dd>
+	<dt>10</dt>
+		<dd>0.654651498842696</dd>
+	<dt>11</dt>
+		<dd>-0.745348501157303</dd>
+	<dt>12</dt>
+		<dd>0.675572807006601</dd>
+	<dt>13</dt>
+		<dd>0.16561816120057</dd>
+	<dt>14</dt>
+		<dd>-1.72703556735736</dd>
+	<dt>15</dt>
+		<dd>-1.08304682238617</dd>
+	<dt>16</dt>
+		<dd>-0.068474335848017</dd>
+	<dt>17</dt>
+		<dd>5.04920376105967</dd>
+	<dt>18</dt>
+		<dd>6.74529611114699</dd>
+	<dt>19</dt>
+		<dd>-3.69068489460044</dd>
+	<dt>20</dt>
+		<dd>5.09031922057126</dd>
+	<dt>21</dt>
+		<dd>-2.69830967532141</dd>
+	<dt>22</dt>
+		<dd>-2.49641509475568</dd>
+	<dt>23</dt>
+		<dd>-3.17841839355699</dd>
+	<dt>24</dt>
+		<dd>-2.82498557486204</dd>
+	<dt>25</dt>
+		<dd>2.55103234610262</dd>
+	<dt>26</dt>
+		<dd>-0.178543349826627</dd>
+	<dt>27</dt>
+		<dd>-1.38576689758782</dd>
+	<dt>28</dt>
+		<dd>1.71098688783741</dd>
+	<dt>29</dt>
+		<dd>-3.31545871196233</dd>
+	<dt>30</dt>
+		<dd>-1.08423985345285</dd>
+	<dt>31</dt>
+		<dd>-1.28355913394969</dd>
+	<dt>32</dt>
+		<dd>-0.323884527011619</dd>
+</dl>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 7: Diagnostic Plots  —  Residuals against Fitted Values</h2>
+<p>In this step, you will generate plot of residuals against fitted values to test the assumption of homoscadasticity.</p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.<br/>
+NOTE: If the plot is not created, click the code section and hit the <strong>Run</strong> button again.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span>plot<span class="p">(</span>fitted_values<span class="p">,</span> residuals<span class="p">,</span> 
+     main <span class="o">=</span> <span class="s">&quot;Residuals against Fitted Values&quot;</span><span class="p">,</span>
+     xlab <span class="o">=</span> <span class="s">&quot;Fitted Values&quot;</span><span class="p">,</span> ylab <span class="o">=</span> <span class="s">&quot;Residuals&quot;</span><span class="p">,</span>
+     col<span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">,</span> 
+     pch <span class="o">=</span> <span class="m">19</span><span class="p">,</span> frame <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea">
+<img src="javascript://"/>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 8: Diagnostic Plots  —  Q-Q Plot</h2>
+<p>In this step, you will generate a Q-Q plot to test assumptions of normality of the residuals.</p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.<br/>
+NOTE: If the plot is not created, click the code section and hit the <strong>Run</strong> button again.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span>qqnorm<span class="p">(</span>residuals<span class="p">,</span> pch <span class="o">=</span> <span class="m">19</span><span class="p">,</span> col<span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">,</span> frame <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+qqline<span class="p">(</span>residuals<span class="p">,</span> col <span class="o">=</span> <span class="s">&quot;blue&quot;</span><span class="p">,</span> lwd <span class="o">=</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea">
+<img src="javascript://"/>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 9: Confidence Interval for Parameter Estimates<a rel="noopener" class="anchor-link" href="#Step-9:-Confidence-Interval-for-Parameter-Estimates">&#182;</a></h2><p>In this step, you will use the <strong>confint</strong> function to create 90% confidence intervals for the beta parameters.</p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span><span class="c1"># confidence intervals for model parameters</span>
+<span class="kp">print</span><span class="p">(</span><span class="s">&quot;confint&quot;</span><span class="p">)</span>
+conf_90_int <span class="o">&lt;-</span> confint<span class="p">(</span>model2<span class="p">,</span> level<span class="o">=</span><span class="m">0.90</span><span class="p">)</span> 
+<span class="kp">round</span><span class="p">(</span>conf_90_int<span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &quot;confint&quot;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea">
+<table>
+<caption>A matrix: 5 &#215; 2 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope="col">5 %</th><th scope="col">95 %</th></tr>
+</thead>
+<tbody>
+	<tr><th scope="row">(Intercept)</th><td>-18.7488</td><td>25.2427</td></tr>
+	<tr><th scope="row">wt</th><td> -2.3414</td><td>10.6771</td></tr>
+	<tr><th scope="row">drat</th><td>  3.5516</td><td>15.5725</td></tr>
+	<tr><th scope="row">am1</th><td> -4.1845</td><td> 1.2564</td></tr>
+	<tr><th scope="row">wt:drat</th><td> -4.6004</td><td>-0.8164</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Step 10: Predictions, Prediction Interval, and Confidence Interval<a rel="noopener" class="anchor-link" href="#Step-10:-Predictions,-Prediction-Interval,-and-Confidence-Interval">&#182;</a></h2><p>In this step, you will predict the fuel economy for a car that has a weight of 3.88, a rear axle ratio of 3.05, and has a manual transmission. You will also obtain a 90% prediction interval and confidence interval for this prediction. Note that this observation is not from the dataset that was used to create this model.</p>
+<p>Click the block of code below and hit the <strong>Run</strong> button above.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span>newdata <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>wt<span class="o">=</span><span class="m">3.88</span><span class="p">,</span> drat<span class="o">=</span><span class="m">3.05</span><span class="p">,</span> am<span class="o">=</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
+
+<span class="kp">print</span><span class="p">(</span><span class="s">&quot;prediction interval&quot;</span><span class="p">)</span>
+prediction_pred_int <span class="o">&lt;-</span> predict<span class="p">(</span>model2<span class="p">,</span> newdata<span class="p">,</span> interval<span class="o">=</span><span class="s">&quot;predict&quot;</span><span class="p">,</span> level<span class="o">=</span><span class="m">0.90</span><span class="p">)</span> 
+<span class="kp">round</span><span class="p">(</span>prediction_pred_int<span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+
+<span class="kp">print</span><span class="p">(</span><span class="s">&quot;confidence interval&quot;</span><span class="p">)</span>
+prediction_conf_int <span class="o">&lt;-</span> predict<span class="p">(</span>model2<span class="p">,</span> newdata<span class="p">,</span> interval<span class="o">=</span><span class="s">&quot;confidence&quot;</span><span class="p">,</span> level<span class="o">=</span><span class="m">0.90</span><span class="p">)</span> 
+<span class="kp">round</span><span class="p">(</span>prediction_conf_int<span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &quot;prediction interval&quot;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea">
+<table>
+<caption>A matrix: 1 &#215; 3 of type dbl</caption>
+<thead>
+	<tr><th scope="col">fit</th><th scope="col">lwr</th><th scope="col">upr</th></tr>
+</thead>
+<tbody>
+	<tr><td>15.0672</td><td>9.4501</td><td>20.6844</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &quot;confidence interval&quot;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea">
+<table>
+<caption>A matrix: 1 &#215; 3 of type dbl</caption>
+<thead>
+	<tr><th scope="col">fit</th><th scope="col">lwr</th><th scope="col">upr</th></tr>
+</thead>
+<tbody>
+	<tr><td>15.0672</td><td>12.2316</td><td>17.9029</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Your Code<a rel="noopener" class="anchor-link" href="#Your-Code">&#182;</a></h2><p>You have been asked to create regression models in the Module Two Problem Set. Review the Problem Set Report template to see the questions you will be answering about your models.</p>
+<p>Use the empty blocks below to write the R code for your models and get outputs. Then use the outputs to answer the questions in your problem set report.</p>
+<p><strong>Note: Use the + (plus) button to add new code blocks or the scissor icon to remove empty code blocks, if needed.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[&#160;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-r"><pre><span></span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>End of Module Two Jupyter Notebook<a rel="noopener" class="anchor-link" href="#End-of-Module-Two-Jupyter-Notebook">&#182;</a></h2><p>Attach the HTML output along with your problem set report for the Module Two Problem Set. The HTML output can be downloaded by clicking <strong>File</strong>, then <strong>Download as</strong>, then <strong>HTML</strong>. Be sure to answer all of the questions in your problem set report.</p>
+
+</div>
+</div>
+</div>
+    </i></i></div><i><i>
+  </i></i></div><i><i>
+</i></i><i><i>
+
+ 
+
+
+</i></i><i><i>
+</i></i><script type="module" src="https://s.brightspace.com/lib/bsi/20.23.3-209/unbundled/mathjax.js"></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() {
+					if (document.querySelector('math') || /\$\$|\\\(|\\\[|\\begin{|\\ref{|\\eqref{/.test(document.body.innerHTML)) {
+						document.querySelectorAll('mspace[linebreak="newline"]').forEach(elm => {
+							elm.setAttribute('style', 'display: block; height: 0.5rem;');
+						});
+
+						window.D2L.MathJax.loadMathJax({
+							'outputScale': 1.3,
+							'renderLatex': false
+						});
+					}
+				});</script><script type="module" src="https://s.brightspace.com/lib/bsi/20.23.3-209/unbundled/prism.js"></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() {
+					document.querySelectorAll('.d2l-code').forEach(code => {
+						window.D2L.Prism.formatCodeElement(code);
+					});
+				});</script></body></html>
